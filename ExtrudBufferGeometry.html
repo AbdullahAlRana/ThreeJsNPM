@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>-----🎨-------</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="module">
+        import * as THREE from '/node_modules/three/src/Three.js';
+        import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
+
+        let camera, scene, renderer, controls;
+
+        const createWorld = () => {
+            const material = new THREE.MeshStandardMaterial({ color: 0xff9999 });
+
+            const shape = new THREE.Shape();
+            shape.moveTo(0, 0);
+            shape.lineTo(1, 0);
+            shape.lineTo(1, 1);
+            shape.lineTo(0, 1);
+            shape.lineTo(0, 0);
+
+            // This geometry points front
+            const flatShapeGeometry = new THREE.Mesh(new THREE.ShapeGeometry(shape), material);
+
+            // This geometry points up
+            const rotatedFlatShapeGeometry = new THREE.Mesh(new THREE.ShapeGeometry(shape), material)
+            rotatedFlatShapeGeometry.rotateX(-Math.PI / 2);
+
+            // This geometry is extruded forward
+            const flatExtrudedShapeGeometry = new THREE.Mesh(new THREE.ExtrudeBufferGeometry([shape], {
+                steps: 1,
+                depth: 2.0,
+                bevelEnabled: false,
+                curveSegments: 32
+            }), material)
+
+            // This geometry is extruded upwards
+            const rotatedExtrudedShapeGeometry = new THREE.Mesh(new THREE.ExtrudeBufferGeometry([shape], {
+                steps: 1,
+                depth: 5.0,
+                bevelEnabled: false,
+                curveSegments: 0
+            }), material);
+            rotatedExtrudedShapeGeometry.rotateX(-Math.PI / 2);
+
+            [
+                flatShapeGeometry,
+                rotatedFlatShapeGeometry,
+                flatExtrudedShapeGeometry,
+                rotatedExtrudedShapeGeometry,
+            ].forEach((mesh, index) => {
+                mesh.position.x += index * 2.0;
+
+                scene.add(mesh);
+            });
+        };
+
+        const init = () => {
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000.0);
+            camera.position.set(5, 3, 7);
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x333333);
+
+            scene.add(new THREE.HemisphereLight(0xffffcc, 0x19bbdc, 1));
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            document.body.appendChild(renderer.domElement);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+
+            createWorld();
+        }
+
+        const animate = () => {
+            requestAnimationFrame(animate);
+
+            controls.update();
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+        animate();
+
+    </script>
+</body>
+
+</html>
