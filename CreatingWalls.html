@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Practice --🎨--</title>
+    <title>Practice</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <style>
@@ -32,30 +32,53 @@
             wallGroup.add(wall);
             scene.add(wallGroup);
 
-            const wallShape = new THREE.Shape();
-            wallShape.moveTo(0, 0);
-            wallShape.lineTo(4.01, 0.05);
-            wallShape.lineTo(4, 1.01);
-            wallShape.lineTo(0, 1.05);
-            wallShape.lineTo(0, 0);
-            const wallGeometry = new THREE.ExtrudeBufferGeometry([wallShape], {
-                steps: 1,
-                depth: 0.2,
-                bevelEnabled: false,
-                curveSegments: 32
-            });
-
-            function createWall(initX1, inity1)
+            function createWall(x1, y1, x2, y2, height)
             {
+                const wallShape = new THREE.Shape();
+                wallShape.moveTo(0, 0);
+                wallShape.lineTo(x2, y2);
+                wallShape.lineTo(x2, y2 + height);
+                wallShape.lineTo(x1, y1 + height);
+                wallShape.lineTo(y1, y1);
+                const wallGeometry = new THREE.ExtrudeBufferGeometry([wallShape], {
+                    steps: 1,
+                    depth: 0.2,
+                    bevelEnabled: false,
+                    curveSegments: 32
+                });
 
+                return new THREE.Mesh(wallGeometry, new THREE.MeshStandardMaterial({ color: 0xff9999 }));
             }
 
-            const wallA = new THREE.Mesh(wallGeometry, new THREE.MeshStandardMaterial({ color: 0xff9999 }));
+            const wallA = createWall(0, 0, 6, 0, 2);
             wall.add(wallA);
 
-            // const wallB = wallA.clone();
-            // wallB.translateZ(-1.8);
-            // wall.add(wallB);
+            const window = createWall(0, 0, 1, 0, 0.8);
+            window.translateX(6);
+            wall.add(window);
+
+            const wallA2 = createWall(0, 0, 3, 0, 2);
+            wallA2.translateX(7);
+            wall.add(wallA2);
+
+            const wallB = createWall(0, 0, 10, 0, 2);
+            wallB.translateZ(10);
+            wall.add(wallB);
+
+            const wallC = createWall(0, 0, 10, 0, 2);
+            wallC.rotateY(-Math.PI / 2);
+            wall.add(wallC);
+
+            const wallD = createWall(0, 0, 7, 0, 2);
+            wallD.rotateY(-Math.PI / 2);
+            wallD.translateZ(-10);
+            wall.add(wallD);
+
+            const wallD3 = createWall(0, 0, 2, 0, 2);
+            wallD3.rotateY(-Math.PI / 2);
+            wallD3.translateZ(-10);
+            wallD3.translateX(8);
+            wall.add(wallD3);
 
             const ground = new THREE.Mesh(new THREE.PlaneBufferGeometry(100, 100), new THREE.MeshStandardMaterial({ color: 0xffffff }));
             ground.rotateX(-Math.PI / 2);
